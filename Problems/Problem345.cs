@@ -33,7 +33,161 @@ namespace ProjectEuler.Problems
                                             new int[] {813,883,451,509,615,77,281,613,459,205,380,274,302,35,805}
                                         };
 
+
         public static void Run()
+        {
+            bool printPartials = true;
+
+            List<List<int>> matrixList = new List<List<int>>();
+            List<List<int>> matrixListSorted = new List<List<int>>();
+            foreach(var row in matrix) {
+                matrixList.Add(row.ToList());
+                matrixListSorted.Add(row.ToList());
+            }
+
+            foreach (var row in matrixListSorted)
+            {
+                row.Sort();
+                row.Reverse();
+            }
+
+            List<List<int>> indexSorted = new List<List<int>>();
+            for(int i = 0; i < matrixListSorted.Count; i++)
+            {
+                indexSorted.Add(new List<int>());
+                for (int j = 0; j < matrixListSorted[i].Count; j++)
+                {
+                    indexSorted[i].Add(matrixList[i].IndexOf(matrixListSorted[i][j]));
+                }
+            }
+
+            foreach (var row in indexSorted)
+            {
+                foreach (var ix in row)
+                {
+                    if(printPartials) Console.Write("{0} ", ix);
+                }
+                if (printPartials) Console.WriteLine();
+            }
+            if (printPartials) Console.WriteLine();
+
+            int maxSum = 0;
+            for (int startRow = 0; startRow < matrix.Length; startRow++)
+            {
+                // Check valid combinations starting from a specific Row
+                for (int startIndex = 0; startIndex < matrix.Length; startIndex++)
+                {
+                    // Check for valid combinations using Largest, then Second Largest
+                    List<int> usedColumns = new List<int>(); ;
+                    for (int i = startRow; true; i = i == matrix.Length - 1 ? 0 : i+1)
+                    {
+                        // Check all rows from starting point. Prevent overflow by making it "round"
+                        for (int j = (i == startRow ? startIndex : 0); j < matrix[0].Length; j++)
+                        {
+                            if (!usedColumns.Contains(indexSorted[i][j]))
+                            {
+                                usedColumns.Add(indexSorted[i][j]);
+                                break;
+                            }
+                        }
+                        if(usedColumns.Count == matrix.Length) {
+                            // Stop when you've selected all columns
+                            break;
+                        }
+                    }
+                    foreach (var item in usedColumns)
+                        if (printPartials) Console.Write("{0} ", item);
+
+                    int sum = 0;
+                    for (int ix = 0; ix < usedColumns.Count; ix++)
+                    {
+                        // Add numbers, by row, by column
+                        int i = startRow + ix < matrix.Length ? startRow + ix : (startRow + ix) - matrix.Length;
+                        int j = usedColumns[ix];
+                        sum += matrix[i][j];
+                    }
+                    if (printPartials) Console.Write(" = {0}", sum);
+                    maxSum = sum > maxSum ? sum : maxSum;
+                    if (printPartials) Console.WriteLine();
+                }
+                if (printPartials) Console.WriteLine("=====");
+            }
+            Console.WriteLine("Max: {0}", maxSum);
+            Console.ReadLine();
+
+        }
+
+        public static void RunSortedMatrix()
+        {
+            List<List<int>> matrixList = new List<List<int>>();
+            List<List<int>> matrixListSorted = new List<List<int>>();
+            foreach(var row in matrix) {
+                matrixList.Add(row.ToList());
+                matrixListSorted.Add(row.ToList());
+            }
+
+            foreach (var row in matrixListSorted)
+            {
+                row.Sort();
+                row.Reverse();
+            }
+
+            List<List<int>> indexSorted = new List<List<int>>();
+            for(int i = 0; i < matrixListSorted.Count; i++)
+            {
+                indexSorted.Add(new List<int>());
+                for (int j = 0; j < matrixListSorted[i].Count; j++)
+                {
+                    indexSorted[i].Add(matrixList[i].IndexOf(matrixListSorted[i][j]));
+                }
+            }
+
+            foreach (var row in indexSorted)
+            {
+                foreach (var ix in row)
+                {
+                    Console.Write("{0} ", ix);
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine();
+
+            int maxSum = 0;
+            for (int startIndex = 0; startIndex < matrix.Length; startIndex++)
+            {
+                List<int> usedColumns = new List<int>(); ;
+                for (int i = 0; i < matrix.Length; i++)
+                {
+                    for (int j = (i==0 ? startIndex : 0); j < matrix[0].Length; j++)
+                    {
+                        if (!usedColumns.Contains(indexSorted[i][j]))
+                        {
+                            usedColumns.Add(indexSorted[i][j]);
+                            break;
+                        }
+                    }
+                }
+                foreach (var item in usedColumns)
+                    Console.Write("{0} ", item);
+
+                int sum = 0;
+                for (int i = 0; i < usedColumns.Count; i++)
+                {
+                    int j = usedColumns[i];
+                    sum += matrix[i][j];
+                }
+                Console.Write(" = {0}", sum);
+                maxSum = sum > maxSum ? sum : maxSum;
+                Console.WriteLine();
+            }
+            Console.WriteLine("Max: {0}", maxSum);
+            Console.ReadLine();
+
+
+
+        }
+
+        public static void Run_AllPermutations()
         {
             // We define the Matrix Sum of a matrix as the maximum sum of matrix elements with each element being the only one in his row and column. 
             // For example, the Matrix Sum of the matrix below equals 3315 ( = 863 + 383 + 343 + 959 + 767)
@@ -67,6 +221,70 @@ namespace ProjectEuler.Problems
                 Console.Write("{0},",matrix[ix][maxColumns[ix]]);
             }
             Console.Write("{0}) = ", matrix[maxColumns.Length-1][maxColumns[maxColumns.Length-1]]);
+            Console.WriteLine(maxSum);
+            Console.ReadLine();
+        }
+
+        public static void Run_UsingLargestNumber()
+        {
+            // We define the Matrix Sum of a matrix as the maximum sum of matrix elements with each element being the only one in his row and column. 
+            // For example, the Matrix Sum of the matrix below equals 3315 ( = 863 + 383 + 343 + 959 + 767)
+
+            int maxNumber = 0;
+            int maxI = 0, maxJ = 0;
+            for (int a = 0; a < matrix.Length; a++)
+            {
+                for (int b = 0; b < matrix[a].Length; b++)
+                {
+                    if (matrix[a][b] > maxNumber)
+                    {
+                        maxI = a;
+                        maxJ = b;
+                        maxNumber = matrix[a][b];
+                    }
+                }
+            }
+
+            List<int> colList = new List<int>();
+            for (int c = 0; c < matrix[0].Length; c++)
+            {
+                if (c != maxJ)
+                {
+                    colList.Add(c);
+                }
+            }
+
+            int[] columns = colList.ToArray();
+            long maxSum = 0;
+            int[] maxColumns = new int[columns.Length];
+            long sum;
+            int i, j;
+            List<int> columnsToAdd;
+
+            do
+            {
+                columnsToAdd = columns.ToList();
+                columnsToAdd.Insert(maxI, maxJ);
+                sum = 0;
+                for (i = 0; i < matrix.Length; i++)
+                {
+                    j = columnsToAdd[i];
+                    sum += matrix[i][j];
+                }
+                if (sum > maxSum)
+                {
+                    maxSum = sum;
+                    maxColumns = columns.ToArray();
+                }
+            }
+            while (Permutation.NextPermutation(columns));
+
+            Console.Write("(");
+            for (int ix = 0; ix < maxColumns.Length - 1; ix++)
+            {
+                Console.Write("{0},", matrix[ix][maxColumns[ix]]);
+            }
+            Console.Write("{0}) = ", matrix[maxColumns.Length - 1][maxColumns[maxColumns.Length - 1]]);
             Console.WriteLine(maxSum);
             Console.ReadLine();
         }
