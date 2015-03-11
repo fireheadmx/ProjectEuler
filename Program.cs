@@ -206,6 +206,10 @@ namespace ProjectEuler
 
             //Problems.Problem68.Run(); // Picked it up again 2/11/2015
             //Problems.Problem80.Run();
+
+            //Problems.Problem357.Run(); // 3/11/2015 // 1739023853137
+            Problems.Problem345.Run();
+
             
         }
     }
