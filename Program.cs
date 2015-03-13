@@ -208,9 +208,11 @@ namespace ProjectEuler
             //Problems.Problem80.Run();
 
             //Problems.Problem357.Run(); // 3/11/2015 // 1739023853137
-            Problems.Problem345.Run();
-
             
+            //Problems.Problem345.Run(); // All permutations are Too long to run
+            //Problems.Problem345.Run_AllPermutations(); //(973,957,993,853,962,870,992,972,848,976,969,901,823,966,883) = 13938
+
+            Problems.Problem124.Run();
         }
     }
 }
