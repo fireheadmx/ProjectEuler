@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.IO;
+using System.Numerics;
 
 namespace ProjectEuler.Problems
 {
@@ -36,7 +37,7 @@ namespace ProjectEuler.Problems
 
         public static void Run()
         {
-            bool printPartials = true;
+            bool printPartials = false;
 
             List<List<int>> matrixList = new List<List<int>>();
             List<List<int>> matrixListSorted = new List<List<int>>();
@@ -187,16 +188,107 @@ namespace ProjectEuler.Problems
 
         }
 
+        public static void Run_AllButLargestPermutations()
+        {
+            /**********  DOESNT WORK EVEN ON SMALLEST EXAMPLE *********/
+            List<List<int>> matrixCopy = new List<List<int>>();
+            foreach (var row in matrix)
+            {
+                matrixCopy.Add(row.ToList());
+            }
+            int maxDrop = 0;
+            int maxX = 0, maxY = 0;
+            for (int x = 0; x < matrixCopy.Count; x++)
+            {
+                for (int y = 0; y < matrixCopy[x].Count; y++)
+                {
+                    if (matrixCopy[x][y] > maxDrop)
+                    {
+                        maxDrop = matrixCopy[x][y];
+                        maxX = x;
+                        maxY = y;
+                    }
+                }
+            }
+            foreach (List<int> row in matrixCopy)
+            {
+                row.RemoveAt(maxY);
+            }
+            matrixCopy.RemoveAt(maxX);
+
+
+
+            List<int> colList = new List<int>();
+            for (int c = 0; c < matrixCopy[0].Count; c++)
+            {
+                colList.Add(c);
+            }
+
+            int[] columns = colList.ToArray();
+            long maxSum = 0;
+            int[] maxColumns = new int[columns.Length];
+            long sum;
+            int i, j;
+
+            do
+            {
+                sum = maxDrop;
+                for (i = 0; i < matrixCopy.Count; i++)
+                {
+                    j = columns[i];
+                    sum += matrixCopy[i][j];
+                }
+                if (sum > maxSum)
+                {
+                    maxSum = sum;
+                    maxColumns = columns.ToArray();
+
+                    /**********/
+                    string partialPrintOut = "";
+                    partialPrintOut += string.Format("({0},", maxDrop);
+                    for (int ix = 0; ix < maxColumns.Length - 1; ix++)
+                    {
+                        partialPrintOut += string.Format("{0},", matrixCopy[ix][maxColumns[ix]]);
+                    }
+                    partialPrintOut += string.Format("{0}) = ", matrixCopy[maxColumns.Length - 1][maxColumns[maxColumns.Length - 1]]);
+                    partialPrintOut += string.Format("{0}", maxSum);
+                    Console.WriteLine(partialPrintOut);
+                    using (StreamWriter str_out = new StreamWriter("C:/data/p345.txt", true))
+                    {
+                        str_out.WriteLine(partialPrintOut);
+                    }
+                    /********/
+                }
+            }
+            while (Permutation.NextPermutation(columns));
+
+
+            string printOut = "FINAL: ";
+            printOut += string.Format("({0},",maxDrop);
+            for (int ix = 0; ix < maxColumns.Length - 1; ix++)
+            {
+                printOut += string.Format("{0},", matrixCopy[ix][maxColumns[ix]]);
+            }
+            printOut += string.Format("{0}) = ", matrixCopy[maxColumns.Length - 1][maxColumns[maxColumns.Length - 1]]);
+            printOut += string.Format("{0}", maxSum);
+
+            Console.WriteLine(printOut);
+
+            using (StreamWriter str_out = new StreamWriter("C:/data/p345.txt", true))
+            {
+                str_out.WriteLine(printOut);
+            }
+
+            Console.ReadLine();
+        }
+
         public static void Run_AllPermutations()
         {
-            // We define the Matrix Sum of a matrix as the maximum sum of matrix elements with each element being the only one in his row and column. 
-            // For example, the Matrix Sum of the matrix below equals 3315 ( = 863 + 383 + 343 + 959 + 767)
-            
             List<int> colList = new List<int>();
             for(int c = 0; c < matrix[0].Length;c++) {
                 colList.Add(c);
             }
-
+            
             int[] columns = colList.ToArray();
             long maxSum = 0;
             int[] maxColumns = new int[columns.Length];
@@ -212,16 +304,41 @@ namespace ProjectEuler.Problems
                 if(sum > maxSum) {
                     maxSum = sum;
                     maxColumns = columns.ToArray();
+
+                    /**********/
+                    string partialPrintOut = "";
+                    partialPrintOut += "(";
+                    for(int ix = 0; ix < maxColumns.Length - 1; ix++) {
+                        partialPrintOut += string.Format("{0},",matrix[ix][maxColumns[ix]]);
+                    }
+                    partialPrintOut += string.Format("{0}) = ", matrix[maxColumns.Length - 1][maxColumns[maxColumns.Length - 1]]);
+                    partialPrintOut += string.Format("{0}", maxSum);
+                    Console.WriteLine(partialPrintOut);
+                    using (StreamWriter str_out = new StreamWriter("C:/data/p345.txt", true))
+                    {
+                        str_out.WriteLine(partialPrintOut);
+                    }
+                    /********/
                 }
             }
             while(Permutation.NextPermutation(columns));
 
-            Console.Write("(");
+            
+            string printOut = "FINAL: ";
+            printOut += "(";
             for(int ix = 0; ix < maxColumns.Length - 1; ix++) {
-                Console.Write("{0},",matrix[ix][maxColumns[ix]]);
+                printOut += string.Format("{0},",matrix[ix][maxColumns[ix]]);
             }
-            Console.Write("{0}) = ", matrix[maxColumns.Length-1][maxColumns[maxColumns.Length-1]]);
-            Console.WriteLine(maxSum);
+            printOut += string.Format("{0}) = ", matrix[maxColumns.Length - 1][maxColumns[maxColumns.Length - 1]]);
+            printOut += string.Format("{0}", maxSum);
+
+            Console.WriteLine(printOut);
+
+            using (StreamWriter str_out = new StreamWriter("C:/data/p345.txt", true))
+                {
+                str_out.WriteLine(printOut);
+            }
+
             Console.ReadLine();
         }
 
