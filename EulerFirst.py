@@ -1102,6 +1102,51 @@ def prime_list(upper):
     return [i for i in range(0, upper) if numbers[i]]
 print(prime_list(500))
 
+def euler_100a(bval=707106769168):
+    b = bval
+    perc = 0
+    while perc != 0.5:
+        for t in range(b+2, int(1.5*b)):
+            perc = (b*b - b) / (t*t - t)
+            #print(b, t, perc)
+            if perc == 0.5:
+                print("FOUND: ",b,t,perc)
+                break
+            elif perc < 0.5:
+                if b % 1000 == 0:
+                    print(b,t,perc)
+                break
+        b+= 1
 
+def euler_100b(factor=0.7071067,totval=1000000000000):
+    b = int(totval * factor)
+    r = 0.0
+    pbb = 0.0
+    while 1:
+        r = 0.5 * (1  - 2*b + (8*b*b - 8*b + 1)**0.5)
+        t = b + r
+        #pbb = ((b/(r+b))*((b-1)/(r+b-1)))
+        pbb = (b*b - b) / (t*t - t)
+        if r == int(r) and pbb == 0.5:
+            print("Blue",b,"Red",r,"Total",b+r, pbb)
+            if (r+b >= totval):
+                print("Found")
+                if (r+b >= 1.000001 * totval):
+                    break
+        b+= 1
+# 1003394746
+# 1000000003793
+# 500000010262
+# 707106783028
+# 707106802629
 
-
+def euler_100c(target=1000000000000):
+    b = 15
+    t = 21
+    while (t < target):
+        btemp = 3*b + 2*t - 2
+        ttemp = 4*b + 3*t - 3
+        b = btemp
+        t = ttemp
+    print(b,t-b,t)
+# 756872327473
